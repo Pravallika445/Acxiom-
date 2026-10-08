@@ -1,0 +1,97 @@
+@model AcxiomCRM.Models.FollowUp
+@{
+    ViewData["Title"] = "Follow-Up Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>@Model.Subject</h2>
+    <div>
+        @if (Model.Status == "Pending")
+        {
+            <form asp-action="Complete" asp-route-id="@Model.FollowUpId" method="post" class="d-inline me-2">
+                <button type="submit" class="btn btn-success">Mark Completed</button>
+            </form>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Follow-Up Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Status:</div>
+                    <div class="col-sm-8">
+                        @if (Model.Status == "Pending")
+                        {
+                            <span class="badge bg-warning text-dark fs-6">Pending</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success fs-6">Completed</span>
+                        }
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Due Date & Time:</div>
+                    <div class="col-sm-8 fw-bold">@Model.FollowUpDate.ToString("f")</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Linked Customer:</div>
+                    <div class="col-sm-8">
+                        @if (Model.Customer != null)
+                        {
+                            <a asp-controller="Customers" asp-action="Details" asp-route-id="@Model.CustomerId" class="text-decoration-none">
+                                @Model.Customer.CustomerName (@Model.Customer.CustomerCode)
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">None</span>
+                        }
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Linked Opportunity:</div>
+                    <div class="col-sm-8">
+                        @if (Model.Opportunity != null)
+                        {
+                            <a asp-controller="Opportunities" asp-action="Details" asp-route-id="@Model.OpportunityId" class="text-decoration-none">
+                                @Model.Opportunity.OpportunityName
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">None</span>
+                        }
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Assigned User:</div>
+                    <div class="col-sm-8">@(Model.AssignedToUser?.FullName ?? "Unassigned")</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Description / Notes:</div>
+                    <div class="col-sm-8">
+                        @(string.IsNullOrWhiteSpace(Model.Description) ? "No notes provided." : Model.Description)
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Scheduled On:</div>
+                    <div class="col-sm-8">@Model.CreatedDate.ToString("g")</div>
+                </div>
+                @if (Model.CompletedDate.HasValue)
+                {
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Completed On:</div>
+                        <div class="col-sm-8 text-success">@Model.CompletedDate.Value.ToString("g")</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

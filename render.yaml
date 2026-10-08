@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: acxiom-crm
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_HTTP_PORTS
+        value: 10000
+      - key: ConnectionStrings__DefaultConnection
+        sync: false

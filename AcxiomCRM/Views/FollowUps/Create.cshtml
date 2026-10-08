@@ -1,0 +1,72 @@
+@model AcxiomCRM.ViewModels.FollowUpViewModel
+@{
+    ViewData["Title"] = "Schedule Follow-Up";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h4 class="mb-0">Schedule Follow-Up</h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Subject" class="form-label"></label>
+                        <input asp-for="Subject" class="form-control" placeholder="e.g. Product Demo Call, Contract Review" />
+                        <span asp-validation-for="Subject" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Notes, agenda or preparation details..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="FollowUpDate" class="form-label"></label>
+                        <input asp-for="FollowUpDate" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="FollowUpDate" class="text-danger small"></span>
+                        <div class="form-text">Follow-up date/time cannot be in the past.</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CustomerId" class="form-label"></label>
+                            <select asp-for="CustomerId" class="form-select" asp-items="ViewBag.Customers">
+                                <option value="">-- Optional: Link Customer --</option>
+                            </select>
+                            <span asp-validation-for="CustomerId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="OpportunityId" class="form-label"></label>
+                            <select asp-for="OpportunityId" class="form-select" asp-items="ViewBag.Opportunities">
+                                <option value="">-- Optional: Link Opportunity --</option>
+                            </select>
+                            <span asp-validation-for="OpportunityId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="AssignedToUserId" class="form-label"></label>
+                        <select asp-for="AssignedToUserId" class="form-select" asp-items="ViewBag.Users">
+                            <option value="">-- Unassigned --</option>
+                        </select>
+                        <span asp-validation-for="AssignedToUserId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">Schedule Follow-Up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

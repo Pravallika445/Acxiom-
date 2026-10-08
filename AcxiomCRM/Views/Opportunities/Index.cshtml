@@ -1,0 +1,121 @@
+@model IEnumerable<AcxiomCRM.Models.Opportunity>
+@{
+    ViewData["Title"] = "Opportunities";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Opportunities</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Opportunity</a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3">
+            <div class="col-md-5">
+                <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search by opportunity name or customer..." />
+            </div>
+            <div class="col-md-3">
+                <select name="stage" class="form-select">
+                    <option value="">All Stages</option>
+                    <option value="Prospecting" selected="@(ViewBag.Stage == "Prospecting")">Prospecting</option>
+                    <option value="Qualification" selected="@(ViewBag.Stage == "Qualification")">Qualification</option>
+                    <option value="Proposal" selected="@(ViewBag.Stage == "Proposal")">Proposal</option>
+                    <option value="Negotiation" selected="@(ViewBag.Stage == "Negotiation")">Negotiation</option>
+                    <option value="Closed Won" selected="@(ViewBag.Stage == "Closed Won")">Closed Won</option>
+                    <option value="Closed Lost" selected="@(ViewBag.Stage == "Closed Lost")">Closed Lost</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="Open" selected="@(ViewBag.Status == "Open")">Open</option>
+                    <option value="Won" selected="@(ViewBag.Status == "Won")">Won</option>
+                    <option value="Lost" selected="@(ViewBag.Status == "Lost")">Lost</option>
+                    <option value="Inactive" selected="@(ViewBag.Status == "Inactive")">Inactive</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-secondary w-100">Filter</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Opportunity</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Probability</th>
+                <th>Expected Close</th>
+                <th>Stage</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-4">No opportunities found.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var opp in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">
+                            <a asp-action="Details" asp-route-id="@opp.OpportunityId" class="text-decoration-none">
+                                @opp.OpportunityName
+                            </a>
+                        </td>
+                        <td>@(opp.Customer?.CustomerName ?? "N/A")</td>
+                        <td>$@opp.Amount.ToString("N2")</td>
+                        <td>@opp.Probability%</td>
+                        <td>@opp.ExpectedCloseDate.ToShortDateString()</td>
+                        <td><span class="badge bg-info text-dark">@opp.Stage</span></td>
+                        <td>
+                            @if (opp.Status == "Open")
+                            {
+                                <span class="badge bg-primary">Open</span>
+                            }
+                            else if (opp.Status == "Won")
+                            {
+                                <span class="badge bg-success">Won</span>
+                            }
+                            else if (opp.Status == "Lost")
+                            {
+                                <span class="badge bg-danger">Lost</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@opp.Status</span>
+                            }
+                        </td>
+                        <td>@(opp.AssignedToUser?.FullName ?? "Unassigned")</td>
+                        <td class="text-end">
+                            <a asp-action="Details" asp-route-id="@opp.OpportunityId" class="btn btn-sm btn-outline-info">View</a>
+                            <a asp-action="Edit" asp-route-id="@opp.OpportunityId" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@opp.OpportunityId" method="post" class="d-inline" onsubmit="return confirm('Deactivate this opportunity?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Deactivate</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,72 @@
+@model AcxiomCRM.Models.Customer
+@{
+    ViewData["Title"] = "Customer Details";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3">Customer Details</h1>
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model.CustomerId" class="btn btn-primary me-2">Edit</a>
+                <a asp-action="Index" class="btn btn-outline-secondary">&larr; Back to List</a>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="text-muted small">Customer Code</label>
+                        <div class="fs-5"><code>@Model.CustomerCode</code></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">Status</label>
+                        <div>
+                            @if (Model.Status == "Active")
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">Customer Name</label>
+                        <div class="fs-5 fw-bold">@Model.CustomerName</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">Company Name</label>
+                        <div class="fs-5">@(Model.CompanyName ?? "-")</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">Email Address</label>
+                        <div><a href="mailto:@Model.Email">@Model.Email</a></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">Phone Number</label>
+                        <div>@Model.Phone</div>
+                    </div>
+                    <div class="col-12">
+                        <label class="text-muted small">Address</label>
+                        <div>@(Model.Address ?? "-")</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">City</label>
+                        <div>@(Model.City ?? "-")</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">State</label>
+                        <div>@(Model.State ?? "-")</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">Created Date</label>
+                        <div>@Model.CreatedDate.ToString("yyyy-MM-dd HH:mm")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

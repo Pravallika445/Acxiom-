@@ -1,0 +1,130 @@
+@model AcxiomCRM.Models.Opportunity
+@{
+    ViewData["Title"] = "Opportunity Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>@Model.OpportunityName</h2>
+    <div>
+        <a asp-controller="FollowUps" asp-action="Create" asp-route-opportunityId="@Model.OpportunityId" asp-route-customerId="@Model.CustomerId" class="btn btn-outline-success me-2">+ Schedule Follow-Up</a>
+        <a asp-action="Edit" asp-route-id="@Model.OpportunityId" class="btn btn-primary me-2">Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Opportunity Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Customer:</div>
+                    <div class="col-sm-8 fw-bold">
+                        @if (Model.Customer != null)
+                        {
+                            <a asp-controller="Customers" asp-action="Details" asp-route-id="@Model.CustomerId" class="text-decoration-none">
+                                @Model.Customer.CustomerName (@Model.Customer.CustomerCode)
+                            </a>
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Amount:</div>
+                    <div class="col-sm-8 fs-5 fw-bold text-success">$@Model.Amount.ToString("N2")</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Probability:</div>
+                    <div class="col-sm-8">
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: @Model.Probability%;" aria-valuenow="@Model.Probability" aria-valuemin="0" aria-valuemax="100">
+                                @Model.Probability%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Expected Close Date:</div>
+                    <div class="col-sm-8">@Model.ExpectedCloseDate.ToLongDateString()</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Stage:</div>
+                    <div class="col-sm-8"><span class="badge bg-info text-dark">@Model.Stage</span></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Status:</div>
+                    <div class="col-sm-8">
+                        @if (Model.Status == "Open")
+                        {
+                            <span class="badge bg-primary">Open</span>
+                        }
+                        else if (Model.Status == "Won")
+                        {
+                            <span class="badge bg-success">Won</span>
+                        }
+                        else if (Model.Status == "Lost")
+                        {
+                            <span class="badge bg-danger">Lost</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@Model.Status</span>
+                        }
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Assigned User:</div>
+                    <div class="col-sm-8">@(Model.AssignedToUser?.FullName ?? "Unassigned")</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Created Date:</div>
+                    <div class="col-sm-8">@Model.CreatedDate.ToString("g")</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Associated Follow-Ups</h5>
+                <a asp-controller="FollowUps" asp-action="Create" asp-route-opportunityId="@Model.OpportunityId" asp-route-customerId="@Model.CustomerId" class="btn btn-sm btn-outline-primary">+ Add Follow-Up</a>
+            </div>
+            <div class="card-body">
+                @if (Model.FollowUps == null || !Model.FollowUps.Any())
+                {
+                    <p class="text-muted text-center py-3 mb-0">No follow-ups scheduled for this opportunity.</p>
+                }
+                else
+                {
+                    <div class="list-group">
+                        @foreach (var f in Model.FollowUps)
+                        {
+                            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">@f.Subject</h6>
+                                    <small class="text-muted">Due: @f.FollowUpDate.ToString("g") | Status: <span class="badge @(f.Status == "Completed" ? "bg-success" : "bg-warning text-dark")">@f.Status</span></small>
+                                    @if (!string.IsNullOrEmpty(f.Description))
+                                    {
+                                        <p class="mb-0 small text-secondary mt-1">@f.Description</p>
+                                    }
+                                </div>
+                                <div>
+                                    @if (f.Status == "Pending")
+                                    {
+                                        <form asp-controller="FollowUps" asp-action="Complete" asp-route-id="@f.FollowUpId" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-success">Mark Completed</button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

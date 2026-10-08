@@ -1,0 +1,117 @@
+@model IEnumerable<AcxiomCRM.Models.FollowUp>
+@{
+    ViewData["Title"] = "Follow-Ups";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Follow-Ups</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Schedule Follow-Up</a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link @(ViewBag.Filter == "Pending" ? "active" : "")" asp-action="Index" asp-route-filter="Pending">Pending Follow-Ups</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(ViewBag.Filter == "Completed" ? "active" : "")" asp-action="Index" asp-route-filter="Completed">Completed Follow-Ups</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(string.IsNullOrEmpty(ViewBag.Filter) || ViewBag.Filter == "All" ? "active" : "")" asp-action="Index" asp-route-filter="All">All Follow-Ups</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Subject</th>
+                <th>Customer</th>
+                <th>Opportunity</th>
+                <th>Due Date & Time</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">No follow-ups found.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">
+                            <a asp-action="Details" asp-route-id="@item.FollowUpId" class="text-decoration-none">
+                                @item.Subject
+                            </a>
+                        </td>
+                        <td>
+                            @if (item.Customer != null)
+                            {
+                                <a asp-controller="Customers" asp-action="Details" asp-route-id="@item.CustomerId" class="text-decoration-none">
+                                    @item.Customer.CustomerName
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">None</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Opportunity != null)
+                            {
+                                <a asp-controller="Opportunities" asp-action="Details" asp-route-id="@item.OpportunityId" class="text-decoration-none">
+                                    @item.Opportunity.OpportunityName
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">None</span>
+                            }
+                        </td>
+                        <td>
+                            @item.FollowUpDate.ToString("g")
+                        </td>
+                        <td>
+                            @if (item.Status == "Pending")
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Completed</span>
+                            }
+                        </td>
+                        <td>@(item.AssignedToUser?.FullName ?? "Unassigned")</td>
+                        <td class="text-end">
+                            <a asp-action="Details" asp-route-id="@item.FollowUpId" class="btn btn-sm btn-outline-info">View</a>
+                            @if (item.Status == "Pending")
+                            {
+                                <form asp-action="Complete" asp-route-id="@item.FollowUpId" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success">Mark Completed</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
